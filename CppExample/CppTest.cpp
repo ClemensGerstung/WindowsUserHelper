@@ -50,31 +50,7 @@ public:
       WTSCloseServer(_handle);
   }
 
-  const std::vector<Session> GetSessions() {
-    std::vector<Session> sessions = {};
-
-    PWTS_SESSION_INFO wtsSessions = nullptr;
-    DWORD sessionCount = 0;
-
-    auto result = WTSEnumerateSessions(_handle, 0, 1, &wtsSessions, &sessionCount);
-
-    DWORD size = 0;
-    LPSTR lpUserName = nullptr;
-
-    for (size_t i = 0; i < sessionCount; i++)
-    {
-      PWTS_SESSION_INFO wtsSession = (wtsSessions + i);
-      result = WTSQuerySessionInformation(_handle, wtsSession->SessionId, WTSUserName, (LPWSTR*)&lpUserName, &size);
-
-      if (result != 0 && size > 1)
-      {
-        // add item
-      }
-    }
-
-
-    return sessions;
-  }
+  const std::vector<Session> GetSessions();
 
   const std::vector<Process> GetProcesses() {
     std::vector<Process> processes = {};
@@ -82,21 +58,48 @@ public:
 
     return processes;
   }
+
+  const HANDLE Handle() {
+    return _handle;
+  }
 };
 
 class Session {
 private:
-  HANDLE _server;
-  std::string _userName;
-  std::string _domain;
-  std::string _clientName;
-  std::string _sessionName;
+  Server* _server;
+  std::wstring _userName;
+  std::wstring _domain;
+  std::wstring _clientName;
+  std::wstring _sessionName;
   DWORD _sessionId;
   SessionState _state;
 public:
-  Session(HANDLE server, DWORD sessionId) : _server(server), _sessionId(sessionId) {
+  Session(Server* server, DWORD sessionId) : _server(server), _sessionId(sessionId) {
     DWORD size = 0;
-    WTSQuerySessionInformation(_server, _sessionId, WTSConnectState, (LPWSTR*)&_state, &size);
+    LPWSTR lpState = nullptr;
+    LPWSTR lpUserName = nullptr;
+    LPWSTR lpDomainName = nullptr;
+    LPWSTR lpClientName = nullptr;
+    LPWSTR lpSessionName = nullptr;
+
+    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSConnectState, &lpState, &size);
+    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSUserName, &lpUserName, &size);
+    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSDomainName, &lpDomainName, &size);
+    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSClientName, &lpClientName, &size);
+    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSWinStationName, &lpSessionName, &size);
+
+    _userName.assign(lpUserName);
+    _domain.assign(lpDomainName);
+    _clientName.assign(lpClientName);
+    _sessionName.assign(lpSessionName);
+
+    _state = *(reinterpret_cast<::SessionState*>(lpState));
+
+    WTSFreeMemory(&lpSessionName);
+    WTSFreeMemory(&lpClientName);
+    WTSFreeMemory(&lpDomainName);
+    WTSFreeMemory(&lpUserName);
+    WTSFreeMemory(&lpState);
   }
 
   const std::vector<Process> GetProcesses() {
@@ -107,11 +110,35 @@ public:
   }
 
   void Logoff() {
-    WTSLogoffSession(_server, _sessionId, TRUE);
+    WTSLogoffSession(_server->Handle(), _sessionId, TRUE);
   }
 
   void Disconnect() {
-    WTSDisconnectSession(_server, _sessionId, TRUE);
+    WTSDisconnectSession(_server->Handle(), _sessionId, TRUE);
+  }
+
+  const std::wstring& UserName() const {
+    return _userName;
+  }
+
+  const std::wstring& Domain() const {
+    return _domain;
+  }
+
+  const std::wstring& ClientName() const {
+    return _clientName;
+  }
+
+  const std::wstring& SessionName() const {
+    return _sessionName;
+  }
+
+  const DWORD SessionId() const {
+    return _sessionId;
+  }
+
+  const SessionState SessionState() const {
+    return _state;
   }
 };
 
@@ -137,6 +164,12 @@ int main() {
 
   Server server = {  };
   auto sessions = server.GetSessions();
+
+  for (auto&& session : sessions)
+  {
+    std::wcout << session.SessionId() << "\t" << session.SessionName() << "\t" << session.Domain() << "\\" << session.UserName() << std::endl;
+  }
+
   auto processes = server.GetProcesses();
 
 
@@ -176,4 +209,31 @@ int main() {
   //WTSFreeMemory(processes);
 
   std::cin.get();
+}
+
+inline const std::vector<Session> Server::GetSessions() {
+  std::vector<Session> sessions = {};
+
+  PWTS_SESSION_INFO wtsSessions = nullptr;
+  DWORD sessionCount = 0;
+
+  auto result = WTSEnumerateSessions(_handle, 0, 1, &wtsSessions, &sessionCount);
+
+  DWORD size = 0;
+  LPWSTR lpUserName = nullptr;
+
+  for (size_t i = 0; i < sessionCount; i++)
+  {
+    PWTS_SESSION_INFO wtsSession = (wtsSessions + i);
+    result = WTSQuerySessionInformation(_handle, wtsSession->SessionId, WTSUserName, &lpUserName, &size);
+
+    if (result != 0 && lstrlen(lpUserName) > 0)
+    {
+      sessions.emplace_back(this, wtsSession->SessionId);
+    }
+
+    WTSFreeMemory(&lpUserName);
+  }
+
+  return sessions;
 }
