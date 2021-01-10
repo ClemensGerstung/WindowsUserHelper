@@ -10,8 +10,6 @@
 #include <sstream>
 #include <functional>
 
-#include "UserHelper.hpp"
-
 class Server;
 class Session;
 class Process;

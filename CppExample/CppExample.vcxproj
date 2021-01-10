@@ -24,6 +24,7 @@
     <ProjectGuid>{81bcf5a6-fa0b-4f58-a278-a26747475833}</ProjectGuid>
     <RootNamespace>CppTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>CppExample</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
