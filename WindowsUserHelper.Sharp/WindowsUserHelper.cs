@@ -10,89 +10,212 @@ using System.Security;
 
 namespace WindowsUserHelper.Sharp.Intern
 {
-    namespace User
+    namespace Wuh
     {
-        namespace Process
+        public unsafe partial class UserInformation : IDisposable
         {
-            public unsafe partial class UserHelper
+            [StructLayout(LayoutKind.Explicit, Size = 520)]
+            public partial struct __Internal
             {
-                public partial struct __Internal
+                [FieldOffset(0)]
+                internal fixed sbyte userName[255];
+
+                [FieldOffset(255)]
+                internal fixed sbyte domainName[255];
+
+                [FieldOffset(512)]
+                internal uint userNameLength;
+
+                [FieldOffset(516)]
+                internal uint domainNameLength;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0_UserInformation@wuh@@QEAA@AEBU01@@Z")]
+                internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation>();
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation __CreateInstance(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal native, bool skipVTables = false)
+            {
+                return new global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal));
+                *(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private UserInformation(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected UserInformation(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public UserInformation()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public UserInformation(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation _0)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance) = *((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            public sbyte[] UserName
+            {
+                get
                 {
-                    [SuppressUnmanagedCodeSecurity]
-                    [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-                        EntryPoint="?GetUserNameByToken@process@user@@YA?BV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBQEAX@Z")]
-                    internal static extern void GetUserNameByToken(global::System.IntPtr @return, void** token);
-
-                    [SuppressUnmanagedCodeSecurity]
-                    [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-                        EntryPoint="?GetCurrentProcessUser@process@user@@YA?BV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ")]
-                    internal static extern void GetCurrentProcessUser(global::System.IntPtr @return);
-
-                    [SuppressUnmanagedCodeSecurity]
-                    [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-                        EntryPoint="?GetCurrentThreadUser@process@user@@YA?BV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z")]
-                    internal static extern void GetCurrentThreadUser(global::System.IntPtr @return, int isImpersonating);
+                    sbyte[] __value = null;
+                    if (((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->userName != null)
+                    {
+                        __value = new sbyte[255];
+                        for (int i = 0; i < 255; i++)
+                            __value[i] = ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->userName[i];
+                    }
+                    return __value;
                 }
 
-                public static string GetUserNameByToken(global::System.IntPtr token)
+                set
                 {
-                    var __token0 = (void*) token;
-                    var __arg0 = &__token0;
-                    var __ret = new global::Std.BasicString.__Internalc__N_std_S_basic_string__C___N_std_S_char_traits__C___N_std_S_allocator__C();
-                    __Internal.GetUserNameByToken(new IntPtr(&__ret), __arg0);
-                    var __basicStringRet0 = global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>.__CreateInstance(new global::System.IntPtr(&__ret));
-                    var __retString0 = global::Std.BasicStringExtensions.Data(__basicStringRet0);
-                    __basicStringRet0.Dispose();
-                    return __retString0;
+                    if (value != null)
+                    {
+                        for (int i = 0; i < 255; i++)
+                            ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*)__Instance)->userName[i] = value[i];
+                    }
+                }
+            }
+
+            public sbyte[] DomainName
+            {
+                get
+                {
+                    sbyte[] __value = null;
+                    if (((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->domainName != null)
+                    {
+                        __value = new sbyte[255];
+                        for (int i = 0; i < 255; i++)
+                            __value[i] = ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->domainName[i];
+                    }
+                    return __value;
                 }
 
-                public static string GetCurrentProcessUser()
+                set
                 {
-                    var __ret = new global::Std.BasicString.__Internalc__N_std_S_basic_string__C___N_std_S_char_traits__C___N_std_S_allocator__C();
-                    __Internal.GetCurrentProcessUser(new IntPtr(&__ret));
-                    var __basicStringRet0 = global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>.__CreateInstance(new global::System.IntPtr(&__ret));
-                    var __retString0 = global::Std.BasicStringExtensions.Data(__basicStringRet0);
-                    __basicStringRet0.Dispose();
-                    return __retString0;
+                    if (value != null)
+                    {
+                        for (int i = 0; i < 255; i++)
+                            ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*)__Instance)->domainName[i] = value[i];
+                    }
+                }
+            }
+
+            public uint UserNameLength
+            {
+                get
+                {
+                    return ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->userNameLength;
                 }
 
-                public static string GetCurrentThreadUser(int isImpersonating)
+                set
                 {
-                    var __ret = new global::Std.BasicString.__Internalc__N_std_S_basic_string__C___N_std_S_char_traits__C___N_std_S_allocator__C();
-                    __Internal.GetCurrentThreadUser(new IntPtr(&__ret), isImpersonating);
-                    var __basicStringRet0 = global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>.__CreateInstance(new global::System.IntPtr(&__ret));
-                    var __retString0 = global::Std.BasicStringExtensions.Data(__basicStringRet0);
-                    __basicStringRet0.Dispose();
-                    return __retString0;
+                    ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*)__Instance)->userNameLength = value;
+                }
+            }
+
+            public uint DomainNameLength
+            {
+                get
+                {
+                    return ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*) __Instance)->domainNameLength;
+                }
+
+                set
+                {
+                    ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation.__Internal*)__Instance)->domainNameLength = value;
                 }
             }
         }
 
-        namespace Impersonate
+        public unsafe partial class WindowsUserHelper
         {
-            public unsafe partial class UserHelper
+            public partial struct __Internal
             {
-                public partial struct __Internal
-                {
-                    [SuppressUnmanagedCodeSecurity]
-                    [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-                        EntryPoint="?ImpersonateUser@impersonate@user@@YA?BHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0PEAPEAX@Z")]
-                    internal static extern int ImpersonateUser(global::System.IntPtr message, global::System.IntPtr caption, void** userHandle);
-                }
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="QueryUserNameByToken")]
+                internal static extern void QueryUserNameByToken(void** token, global::System.IntPtr pUserInformation);
 
-                public static int ImpersonateUser(string message, string caption, void** userHandle)
-                {
-                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
-                    global::Std.BasicStringExtensions.Assign(__basicString0, message);
-                    var __arg0 = __basicString0.__Instance;
-                    var __basicString1 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
-                    global::Std.BasicStringExtensions.Assign(__basicString1, caption);
-                    var __arg1 = __basicString1.__Instance;
-                    var __ret = __Internal.ImpersonateUser(__arg0, __arg1, userHandle);
-                    __basicString0.Dispose();
-                    __basicString1.Dispose();
-                    return __ret;
-                }
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="GetCurrentProcessUser")]
+                internal static extern void GetCurrentProcessUser(global::System.IntPtr pUserInformation);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="GetCurrentThreadUser")]
+                internal static extern void GetCurrentThreadUser(global::System.IntPtr pUserInformation, int isImpersonating);
+            }
+
+            public static void QueryUserNameByToken(global::System.IntPtr token, global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation pUserInformation)
+            {
+                var __token0 = (void*) token;
+                var __arg0 = &__token0;
+                var __arg1 = ReferenceEquals(pUserInformation, null) ? global::System.IntPtr.Zero : pUserInformation.__Instance;
+                __Internal.QueryUserNameByToken(__arg0, __arg1);
+            }
+
+            public static void GetCurrentProcessUser(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation pUserInformation)
+            {
+                var __arg0 = ReferenceEquals(pUserInformation, null) ? global::System.IntPtr.Zero : pUserInformation.__Instance;
+                __Internal.GetCurrentProcessUser(__arg0);
+            }
+
+            public static void GetCurrentThreadUser(global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation pUserInformation, int isImpersonating)
+            {
+                var __arg0 = ReferenceEquals(pUserInformation, null) ? global::System.IntPtr.Zero : pUserInformation.__Instance;
+                __Internal.GetCurrentThreadUser(__arg0, isImpersonating);
             }
         }
     }

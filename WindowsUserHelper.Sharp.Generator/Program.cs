@@ -4,6 +4,7 @@ using CppSharp.Generators;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace WindowsUserHelper.Sharp.Generator
 {
@@ -35,15 +36,16 @@ namespace WindowsUserHelper.Sharp.Generator
       string projectRoot = Environment.GetEnvironmentVariable("WUH_PROJECT_ROOT");
 
       var options = driver.Options;
+      options.Encoding = Encoding.UTF8;
       options.OutputDir = Path.Combine(projectRoot, "WindowsUserHelper.Sharp");
       options.GeneratorKind = GeneratorKind.CSharp;
-      options.Verbose = true;
       
       var module = options.AddModule("WindowsUserHelper");
       module.OutputNamespace = "WindowsUserHelper.Sharp.Intern";
       
       module.IncludeDirs.Add(Path.Combine(projectRoot, "WindowsUserHelper"));
-      module.Headers.Add("UserHelper.hpp");
+      module.Headers.Add("WindowsUserHelper.h");
+      //module.Headers.Add("SessionState.hpp");
     }
 
     public void SetupPasses(Driver driver)

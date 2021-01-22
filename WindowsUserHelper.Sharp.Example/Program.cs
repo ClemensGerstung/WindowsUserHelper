@@ -9,11 +9,8 @@ namespace WindowsUserHelper.Sharp.Example
       string userName = Helper.GetProcessUserName();
       Console.WriteLine(userName);
 
-      Helper.ImpersonateUser("Test", "adf", () =>
-      {
-        string un = Helper.GetThreadUserName();
-        Console.WriteLine(un);
-      });
+      userName = Helper.GetThreadUserName(true);
+      Console.WriteLine(userName);
 
       Console.ReadLine();
     }

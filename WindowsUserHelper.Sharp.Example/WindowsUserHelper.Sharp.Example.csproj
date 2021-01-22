@@ -101,7 +101,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy $(SolutionDir)x64\Debug\WindowsUserHelper.dll $(TargetDir) /q /y
-xcopy $(SolutionDir)x64\Debug\Std-Symbols.dll $(TargetDir) /q /y</PreBuildEvent>
+    <PreBuildEvent>xcopy $(SolutionDir)x64\Debug\WindowsUserHelper.dll $(TargetDir) /q /y</PreBuildEvent>
   </PropertyGroup>
 </Project>

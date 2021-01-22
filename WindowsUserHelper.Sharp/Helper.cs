@@ -17,26 +17,53 @@ namespace WindowsUserHelper.Sharp
   {
     public static string GetProcessUserName()
     {
-      return Intern.User.Process.UserHelper.GetCurrentProcessUser();
+      Intern.Wuh.UserInformation userInformation = new Intern.Wuh.UserInformation();
+      Intern.Wuh.WindowsUserHelper.GetCurrentProcessUser(userInformation);
+
+      if (userInformation.UserNameLength == 0) return string.Empty;
+
+      unsafe
+      {
+        fixed (sbyte* userName = userInformation.UserName)
+        fixed (sbyte* domainName = userInformation.DomainName)
+        {
+          return string.Format("{0}\\{1}",
+                               new string(userName),
+                               new string(domainName));
+        }
+      }
     }
 
-    public static string GetThreadUserName()
+    public static string GetThreadUserName(bool isImpersonating = true)
     {
-      // provide "true" (1)
-      return Intern.User.Process.UserHelper.GetCurrentThreadUser(1);
+      Intern.Wuh.UserInformation userInformation = new Intern.Wuh.UserInformation();
+      Intern.Wuh.WindowsUserHelper.GetCurrentThreadUser(userInformation, isImpersonating ? 1 : 0);
+
+      if (userInformation.UserNameLength == 0) return string.Empty;
+
+      unsafe
+      {
+        fixed (sbyte* userName = userInformation.UserName)
+        fixed (sbyte* domainName = userInformation.DomainName)
+        {
+          return string.Format("{0}\\{1}",
+                               new string(userName),
+                               new string(domainName));
+        }
+      }
     }
 
     public static void ImpersonateUser(string message, string caption, Action action)
     {
-      unsafe
-      {
-        void* handle = null;
-        Intern.User.Impersonate.UserHelper.ImpersonateUser(message, caption, &handle);
+      //unsafe
+      //{
+      //  void* handle = null;
+      //  Intern.Wuh.Exports.ImpersonateUser(message, caption, &handle);
 
-        action();
+      //  action();
 
-        Win32Native.CloseHandle(handle);
-      }
+      //  Win32Native.CloseHandle(handle);
+      //}
     }
   }
 }

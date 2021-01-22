@@ -21,10 +21,10 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common.hpp">
+    <ClInclude Include="SessionState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UserHelper.hpp">
+    <ClInclude Include="WindowsUserHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,10 +32,13 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UserHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserHelper.cpp">
+    <ClCompile Include="WindowsUserHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

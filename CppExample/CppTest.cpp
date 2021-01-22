@@ -9,6 +9,10 @@
 #include <map>
 #include <sstream>
 #include <functional>
+#include <algorithm>
+#include <numeric>
+
+#include <WindowsUserHelper.h>
 
 class Server;
 class Session;
@@ -30,17 +34,19 @@ enum class SessionState {
 class Server {
 private:
   HANDLE _handle;
+  std::shared_ptr<Server> _this;
 
 public:
   Server() : _handle(WTS_CURRENT_SERVER_HANDLE)
   {
+    _this = std::shared_ptr<Server>(this);
   }
 
-  Server(const std::string& server) {
+  Server(const std::string& server) : Server() {
     _handle = WTSOpenServer((LPWSTR)server.c_str());
   }
 
-  Server(const char* server) {
+  Server(const char* server) : Server() {
     _handle = WTSOpenServer((LPWSTR)server);
   }
 
@@ -66,7 +72,8 @@ public:
 
 class Session {
 private:
-  Server* _server;
+  std::weak_ptr<Server> _server;
+  std::shared_ptr<Session> _this;
   std::wstring _userName;
   std::wstring _domain;
   std::wstring _clientName;
@@ -74,7 +81,9 @@ private:
   DWORD _sessionId;
   SessionState _state;
 public:
-  Session(Server* server, DWORD sessionId) : _server(server), _sessionId(sessionId) {
+  Session(const std::shared_ptr<Server>& server, DWORD sessionId) : _server(server), _sessionId(sessionId) {
+    _this = std::shared_ptr<Session>(this);
+
     DWORD size = 0;
     LPWSTR lpState = nullptr;
     LPWSTR lpUserName = nullptr;
@@ -82,11 +91,11 @@ public:
     LPWSTR lpClientName = nullptr;
     LPWSTR lpSessionName = nullptr;
 
-    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSConnectState, &lpState, &size);
-    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSUserName, &lpUserName, &size);
-    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSDomainName, &lpDomainName, &size);
-    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSClientName, &lpClientName, &size);
-    WTSQuerySessionInformation(_server->Handle(), _sessionId, WTSWinStationName, &lpSessionName, &size);
+    WTSQuerySessionInformation(server->Handle(), _sessionId, WTSConnectState, &lpState, &size);
+    WTSQuerySessionInformation(server->Handle(), _sessionId, WTSUserName, &lpUserName, &size);
+    WTSQuerySessionInformation(server->Handle(), _sessionId, WTSDomainName, &lpDomainName, &size);
+    WTSQuerySessionInformation(server->Handle(), _sessionId, WTSClientName, &lpClientName, &size);
+    WTSQuerySessionInformation(server->Handle(), _sessionId, WTSWinStationName, &lpSessionName, &size);
 
     _userName.assign(lpUserName);
     _domain.assign(lpDomainName);
@@ -102,19 +111,20 @@ public:
     WTSFreeMemory(&lpState);
   }
 
-  const std::vector<Process> GetProcesses() {
-    std::vector<Process> processes = {};
-
-
-    return processes;
-  }
+  const std::vector<Process> GetProcesses();
 
   void Logoff() {
-    WTSLogoffSession(_server->Handle(), _sessionId, TRUE);
+    if (auto pServer = _server.lock())
+    {
+      WTSLogoffSession(pServer->Handle(), _sessionId, TRUE);
+    }
   }
 
   void Disconnect() {
-    WTSDisconnectSession(_server->Handle(), _sessionId, TRUE);
+    if (auto pServer = _server.lock())
+    {
+      WTSDisconnectSession(pServer->Handle(), _sessionId, TRUE);
+    }
   }
 
   const std::wstring& UserName() const {
@@ -143,35 +153,79 @@ public:
 };
 
 class Process {
-  HANDLE _server;
+  std::weak_ptr<Server> _server;
+  std::weak_ptr<Session> _session;
+  std::wstring _processName;
+  DWORD _workingSetSize;
   DWORD _processId;
+  DWORD _sessionId;
 
 public:
-  Process(HANDLE server, DWORD session, DWORD processId) {
+  Process(const std::shared_ptr<Server>& server, DWORD processId, const std::wstring& processName, DWORD workingSetSize, DWORD sessionId)
+  {
+    _server = server;
+    _processId = processId;
+    _processName = processName;
+    _workingSetSize = workingSetSize;
+    _sessionId = sessionId;
+  }
+
+  Process(const std::shared_ptr<Server>& server, const std::shared_ptr<Session>& session, DWORD processId, const std::wstring& processName, DWORD workingSetSize) {
+    _server = server;
+    _session = session;
+    _processId = processId;
+    _processName = processName;
+    _workingSetSize = workingSetSize;
+    _sessionId = session->SessionId();
   }
 
   void Terminate() {
-    WTSTerminateProcess(_server, _processId, -1);
+    if (auto pServer = _server.lock()) {
+      WTSTerminateProcess(pServer->Handle(), _processId, -1);
+    }
+  }
+
+  DWORD WorkingSetSize() const {
+    return _workingSetSize;
   }
 };
 
 
+
 int main() {
+  {
+    wuh::UserInformation info = {};
+    wuh::GetCurrentProcessUser(&info);
+
+    std::cout << info.domainName << "\\" << info.userName << std::endl;
+
+    info = {};
+    wuh::GetCurrentThreadUser(&info, TRUE);
+
+    std::cout << info.domainName << "\\" << info.userName << std::endl;
+  }
+
   //std::wcout << "Current Process User: " << user::process::GetCurrentProcessUser() << std::endl;
   //user::impersonate::ImpersonateUser(L"Please enter credentials of user to impersonate", L"Impersonate Test", []() -> void {
   //  std::wcout << "Impersonate: " << user::process::GetCurrentThreadUser(TRUE) << std::endl;
   //  });
 
-  Server server = {  };
-  auto sessions = server.GetSessions();
+  //Server server = {  };
+  //auto sessions = server.GetSessions();
 
-  for (auto&& session : sessions)
-  {
-    std::wcout << session.SessionId() << "\t" << session.SessionName() << "\t" << session.Domain() << "\\" << session.UserName() << std::endl;
-  }
+  //auto fn = [](DWORD before, const Process& p) { 
+  //  return before + p.WorkingSetSize();
+  //};
 
-  auto processes = server.GetProcesses();
+  //for (auto&& session : sessions)
+  //{
+  //  std::wcout << session.SessionId() << "\t" << session.SessionName() << "\t" << session.Domain() << "\\" << session.UserName() << std::endl;
 
+  //  auto processes = session.GetProcesses();
+  //  auto result = std::accumulate(processes.begin(), processes.end(), 0, fn);
+
+  //  std::cout << "Used RAM: " << result << " b" << std::endl;
+  //}
 
   //PWTS_PROCESS_INFO_EX processes = nullptr;
   //DWORD processCount = 0;
@@ -229,11 +283,55 @@ inline const std::vector<Session> Server::GetSessions() {
 
     if (result != 0 && lstrlen(lpUserName) > 0)
     {
-      sessions.emplace_back(this, wtsSession->SessionId);
+      sessions.emplace_back(_this, wtsSession->SessionId);
     }
 
     WTSFreeMemory(&lpUserName);
   }
 
   return sessions;
+}
+
+inline const std::vector<Process> Session::GetProcesses() {
+  std::vector<Process> sessionProcesses = {};
+  std::map<DWORD, std::wstring> processesMap = {};
+
+  if (auto pServer = _server.lock())
+  {
+    {
+      PWTS_PROCESS_INFO processes = nullptr;
+      DWORD processCount = 0;
+
+      auto result = WTSEnumerateProcesses(pServer->Handle(), 0, 1, &processes, &processCount);
+      for (int i = 0; i < processCount; i++)
+      {
+        PWTS_PROCESS_INFO process = (processes + i);
+        processesMap.emplace(process->ProcessId, std::wstring(process->pProcessName));
+      }
+
+      WTSFreeMemory(processes);
+    }
+
+    {
+      PWTS_PROCESS_INFO_EX processes = nullptr;
+      DWORD processCount = 0;
+      DWORD level = 1;
+
+      auto result = WTSEnumerateProcessesEx(pServer->Handle(), &level, _sessionId, (LPWSTR*)&processes, &processCount);
+      for (int i = 0; i < processCount; i++)
+      {
+        PWTS_PROCESS_INFO_EX process = (processes + i);
+
+        DWORD processId = process->ProcessId;
+        std::wstring processName = processesMap[process->ProcessId];
+        DWORD workingSetSize = process->WorkingSetSize;
+
+        sessionProcesses.emplace_back(pServer, _this, processId, processName, workingSetSize);
+      }
+
+      WTSFreeMemory(processes);
+    }
+  }
+
+  return sessionProcesses;
 }
