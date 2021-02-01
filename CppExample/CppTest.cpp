@@ -193,74 +193,47 @@ public:
 
 
 int main() {
-  {
+  /*{
     wuh::UserInformation info = {};
     wuh::GetCurrentProcessUser(&info);
 
     std::cout << info.domainName << "\\" << info.userName << std::endl;
 
+    HANDLE user = nullptr;
+    wuh::UserImpersonation impersonation = { };
+    impersonation.message = "Test";
+    impersonation.caption = "Blaa";
+    impersonation.userName = "Test User";
+
+    wuh::ImpersonateUser(impersonation, &user);
+
     info = {};
     wuh::GetCurrentThreadUser(&info, TRUE);
 
     std::cout << info.domainName << "\\" << info.userName << std::endl;
-  }
 
-  //std::wcout << "Current Process User: " << user::process::GetCurrentProcessUser() << std::endl;
-  //user::impersonate::ImpersonateUser(L"Please enter credentials of user to impersonate", L"Impersonate Test", []() -> void {
-  //  std::wcout << "Impersonate: " << user::process::GetCurrentThreadUser(TRUE) << std::endl;
-  //  });
+    CloseHandle(user);
 
-  //Server server = {  };
-  //auto sessions = server.GetSessions();
+    wuh::RunAsImpersonate(impersonation, []() {
+      wuh::UserInformation info = {};
+      wuh::GetCurrentThreadUser(&info, TRUE);
 
-  //auto fn = [](DWORD before, const Process& p) { 
-  //  return before + p.WorkingSetSize();
-  //};
+      std::cout << info.domainName << "\\" << info.userName << std::endl;
+      });
+  }*/
 
-  //for (auto&& session : sessions)
-  //{
-  //  std::wcout << session.SessionId() << "\t" << session.SessionName() << "\t" << session.Domain() << "\\" << session.UserName() << std::endl;
+  wuh::Server server = {};
+  wuh::OpenConnection("localhost", &server);
 
-  //  auto processes = session.GetProcesses();
-  //  auto result = std::accumulate(processes.begin(), processes.end(), 0, fn);
+  uint32_t sessionsCount = 0;
+  wuh::EnumerateSessions(server, &sessionsCount, nullptr);
 
-  //  std::cout << "Used RAM: " << result << " b" << std::endl;
-  //}
+  std::vector<wuh::Session> sessions = {};
+  sessions.resize(sessionsCount);
 
-  //PWTS_PROCESS_INFO_EX processes = nullptr;
-  //DWORD processCount = 0;
-  //DWORD level = 1;
+  wuh::EnumerateSessions(server, &sessionsCount, sessions.data());
 
-  //auto result = WTSEnumerateProcessesEx(WTS_CURRENT_SERVER_HANDLE, &level, WTS_ANY_SESSION, (LPSTR*)&processes, &processCount);
-
-  //std::vector<WTS_PROCESS_INFO_EX> processList = {};
-  //processList.resize(processCount);
-
-  //memcpy(processList.data(), processes, processCount * sizeof(WTS_PROCESS_INFO_EX));
-
-  //for (int i = 0; i < processCount; i++)
-  //{
-  //  PWTS_PROCESS_INFO_EX process = (processes + i);
-  //  std::cout << process->pProcessName << std::endl;
-  //}
-
-  //result = WTSFreeMemoryEx(WTSTypeProcessInfoLevel1, processes, processCount);
-
-  //typedef DWORD ProcessId;
-  //typedef std::string ProcessName;
-
-  //std::map<ProcessId, ProcessName> processesMap = {};
-
-  //PWTS_PROCESS_INFO processes = nullptr;
-  //DWORD processCount = 0;
-  //auto result = WTSEnumerateProcesses(WTS_CURRENT_SERVER_HANDLE, 0, 1, &processes, &processCount);
-  //for (int i = 0; i < processCount; i++)
-  //{
-  //  PWTS_PROCESS_INFO process = (processes + i);
-  //  processesMap.emplace(process->ProcessId, ProcessName(process->pProcessName));
-  //}
-
-  //WTSFreeMemory(processes);
+  wuh::CloseConnection(server);
 
   std::cin.get();
 }

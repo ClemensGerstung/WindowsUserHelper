@@ -178,6 +178,167 @@ namespace WindowsUserHelper.Sharp.Intern
             }
         }
 
+        public unsafe partial class UserImpersonation : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 40)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr message;
+
+                [FieldOffset(8)]
+                internal global::System.IntPtr caption;
+
+                [FieldOffset(16)]
+                internal global::System.IntPtr userName;
+
+                [FieldOffset(24)]
+                internal global::System.IntPtr parentWindow;
+
+                [FieldOffset(32)]
+                internal global::System.IntPtr bitmap;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0_UserImpersonation@wuh@@QEAA@AEBU01@@Z")]
+                internal static extern global::System.IntPtr cctor(global::System.IntPtr __instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation>();
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation __CreateInstance(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal native, bool skipVTables = false)
+            {
+                return new global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal));
+                *(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private UserImpersonation(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected UserImpersonation(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public UserImpersonation()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public UserImpersonation(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation _0)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance) = *((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            public string Message
+            {
+                get
+                {
+                    if (((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->message == global::System.IntPtr.Zero)
+                        return default(string);
+                    var __retPtr = (byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->message;
+                    int __length = 0;
+                    while (*(__retPtr++) != 0) __length += sizeof(byte);
+                    return global::System.Text.Encoding.UTF8.GetString((byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->message, __length);
+                }
+
+                set
+                {
+                    byte[] __bytes0 = global::System.Text.Encoding.UTF8.GetBytes(value);
+                    fixed (byte* __bytePtr0 = __bytes0)
+                    {
+                        ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*)__Instance)->message = (global::System.IntPtr) new global::System.IntPtr(__bytePtr0);
+                    }
+                }
+            }
+
+            public string Caption
+            {
+                get
+                {
+                    if (((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->caption == global::System.IntPtr.Zero)
+                        return default(string);
+                    var __retPtr = (byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->caption;
+                    int __length = 0;
+                    while (*(__retPtr++) != 0) __length += sizeof(byte);
+                    return global::System.Text.Encoding.UTF8.GetString((byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->caption, __length);
+                }
+
+                set
+                {
+                    byte[] __bytes0 = global::System.Text.Encoding.UTF8.GetBytes(value);
+                    fixed (byte* __bytePtr0 = __bytes0)
+                    {
+                        ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*)__Instance)->caption = (global::System.IntPtr) new global::System.IntPtr(__bytePtr0);
+                    }
+                }
+            }
+
+            public string UserName
+            {
+                get
+                {
+                    if (((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->userName == global::System.IntPtr.Zero)
+                        return default(string);
+                    var __retPtr = (byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->userName;
+                    int __length = 0;
+                    while (*(__retPtr++) != 0) __length += sizeof(byte);
+                    return global::System.Text.Encoding.UTF8.GetString((byte*) ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*) __Instance)->userName, __length);
+                }
+
+                set
+                {
+                    byte[] __bytes0 = global::System.Text.Encoding.UTF8.GetBytes(value);
+                    fixed (byte* __bytePtr0 = __bytes0)
+                    {
+                        ((global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation.__Internal*)__Instance)->userName = (global::System.IntPtr) new global::System.IntPtr(__bytePtr0);
+                    }
+                }
+            }
+        }
+
         public unsafe partial class WindowsUserHelper
         {
             public partial struct __Internal
@@ -196,6 +357,16 @@ namespace WindowsUserHelper.Sharp.Intern
                 [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                     EntryPoint="GetCurrentThreadUser")]
                 internal static extern void GetCurrentThreadUser(global::System.IntPtr pUserInformation, int isImpersonating);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="ImpersonateUser")]
+                internal static extern void ImpersonateUser(global::System.IntPtr info, void** userHandle);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("WindowsUserHelper", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="RunAsImpersonate")]
+                internal static extern void RunAsImpersonate(global::System.IntPtr info, global::System.IntPtr callback);
             }
 
             public static void QueryUserNameByToken(global::System.IntPtr token, global::WindowsUserHelper.Sharp.Intern.Wuh.UserInformation pUserInformation)
@@ -217,6 +388,29 @@ namespace WindowsUserHelper.Sharp.Intern
                 var __arg0 = ReferenceEquals(pUserInformation, null) ? global::System.IntPtr.Zero : pUserInformation.__Instance;
                 __Internal.GetCurrentThreadUser(__arg0, isImpersonating);
             }
+
+            public static void ImpersonateUser(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation info, void** userHandle)
+            {
+                if (ReferenceEquals(info, null))
+                    throw new global::System.ArgumentNullException("info", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = info.__Instance;
+                __Internal.ImpersonateUser(__arg0, userHandle);
+            }
+
+            public static void RunAsImpersonate(global::WindowsUserHelper.Sharp.Intern.Wuh.UserImpersonation info, global::WindowsUserHelper.Sharp.Intern.Delegates.Action_ callback)
+            {
+                if (ReferenceEquals(info, null))
+                    throw new global::System.ArgumentNullException("info", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = info.__Instance;
+                var __arg1 = callback == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(callback);
+                __Internal.RunAsImpersonate(__arg0, __arg1);
+            }
         }
+    }
+
+    namespace Delegates
+    {
+        [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate void Action_();
     }
 }

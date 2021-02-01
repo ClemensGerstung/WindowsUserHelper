@@ -28,8 +28,8 @@ namespace WindowsUserHelper.Sharp
         fixed (sbyte* domainName = userInformation.DomainName)
         {
           return string.Format("{0}\\{1}",
-                               new string(userName),
-                               new string(domainName));
+                               new string(domainName),
+                               new string(userName));
         }
       }
     }
@@ -47,23 +47,23 @@ namespace WindowsUserHelper.Sharp
         fixed (sbyte* domainName = userInformation.DomainName)
         {
           return string.Format("{0}\\{1}",
-                               new string(userName),
-                               new string(domainName));
+                               new string(domainName),
+                               new string(userName));
         }
       }
     }
 
-    public static void ImpersonateUser(string message, string caption, Action action)
+    public static void BeginImpersonation(string message, string caption, string userName, Action action)
     {
-      //unsafe
-      //{
-      //  void* handle = null;
-      //  Intern.Wuh.Exports.ImpersonateUser(message, caption, &handle);
+      unsafe
+      {
+        Intern.Wuh.UserImpersonation info = new Intern.Wuh.UserImpersonation();
+        info.Caption = caption;
+        info.Message = message;
+        info.UserName = userName;
 
-      //  action();
 
-      //  Win32Native.CloseHandle(handle);
-      //}
+      }
     }
   }
 }
