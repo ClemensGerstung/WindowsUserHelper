@@ -156,14 +156,12 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SessionState.hpp" />
     <ClInclude Include="WindowsUserHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="WindowsUserHelper.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="UserHelper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

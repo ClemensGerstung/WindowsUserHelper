@@ -8,6 +8,7 @@
 #include <sstream>
 #include <combaseapi.h>
 #include <wtsapi32.h>
+#include <map>
 
 #include "WindowsUserHelper.h"
 
@@ -181,6 +182,86 @@ inline void wuh::EnumerateSessions(const Server& server, uint32_t* pSessionsCoun
   }
 }
 
+inline void wuh::EnumerateProcesses(const Server& server, const Session* pSession, uint32_t* pProcessesCount, Process* pProcesses)
+{
+  DWORD sessionId = WTS_ANY_SESSION;
+  if (pSession != nullptr) sessionId = pSession->sessionId;
+
+  WTS_PROCESS_INFOA* pProcessInfo = nullptr;
+  WTS_PROCESS_INFO_EXA* pProcessInfoEx = nullptr;
+  DWORD level = 1;
+  DWORD processCount = 0;
+
+  auto copy = [](char* target, LPSTR src) {
+    if (src != nullptr) {
+      strcpy_s(target, 255, src);
+    }
+  };
+
+  auto result = WTSEnumerateProcessesExA(server.handle, &level, sessionId, (LPSTR*)&pProcessInfoEx, &processCount);
+
+  if (result) {
+    if (pProcesses == nullptr && *pProcessesCount == 0) {
+      *pProcessesCount = processCount;
+    }
+    else if (pProcesses != nullptr && *pProcessesCount > 0) {
+      processCount = 0;
+
+      result = WTSEnumerateProcessesA(server.handle, 0, 1, &pProcessInfo, &processCount);
+      
+      if (result) {
+        std::map<DWORD, WTS_PROCESS_INFOA> procs = {};
+        for (DWORD i = 0; i < processCount; i++) {
+          WTS_PROCESS_INFOA processInfo = *(pProcessInfo + i);
+          procs.emplace(processInfo.ProcessId, processInfo);
+        }
+
+        for (uint32_t i = 0; i < *pProcessesCount; i++) {
+          WTS_PROCESS_INFO_EXA* processInfoEx = (pProcessInfoEx + i);
+          Process* process = (pProcesses + i);
+
+          copy(process->processName, procs[processInfoEx->ProcessId].pProcessName);
+          process->numberOfThreads = processInfoEx->NumberOfThreads;
+          process->pagefileUsage = processInfoEx->PagefileUsage;
+          process->processId = processInfoEx->ProcessId;
+          process->sessionId = processInfoEx->SessionId;
+          process->workingSetSize = processInfoEx->WorkingSetSize;
+        }
+
+        WTSFreeMemory(pProcessInfo);
+      }
+    }
+
+    result = WTSFreeMemoryExA(WTSTypeProcessInfoLevel1, pProcessInfoEx, *pProcessesCount);
+  }
+}
+
 inline void wuh::LogoffSession(const Server& server, const Session& session) {
   auto result = WTSLogoffSession(server.handle, session.sessionId, TRUE);
+}
+
+inline void wuh::TerminateRemoteProcess(const Server& server, const Process& process) {
+  auto result = WTSTerminateProcess(server.handle, process.processId, -1);
+}
+
+inline void wuh::UpdateProcessInformation(const Server& server, Process* process) {
+  WTS_PROCESS_INFO_EXA* pProcessInfoEx = nullptr;
+  DWORD level = 1;
+  DWORD processCount = 0;
+  
+  auto result = WTSEnumerateProcessesExA(server.handle, &level, process->sessionId, (LPSTR*)&pProcessInfoEx, &processCount);
+  if (result) {
+    for (uint32_t i = 0; i < processCount; i++) {
+      WTS_PROCESS_INFO_EXA* processInfoEx = (pProcessInfoEx + i);
+      if (processInfoEx->ProcessId != process->processId) continue;
+
+      process->numberOfThreads = processInfoEx->NumberOfThreads;
+      process->pagefileUsage = processInfoEx->PagefileUsage;
+      process->workingSetSize = processInfoEx->WorkingSetSize;
+
+      break;
+    }
+
+    result = WTSFreeMemoryExA(WTSTypeProcessInfoLevel1, pProcessInfoEx, processCount);
+  }
 }

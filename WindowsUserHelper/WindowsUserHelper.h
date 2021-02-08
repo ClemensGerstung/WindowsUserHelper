@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
   namespace wuh {
-    typedef enum _ConnectionState {
+    typedef enum class _ConnectionState {
       Active,
       Connected,
       ConnectQuery,
@@ -86,13 +86,13 @@ extern "C" {
 
     WUH_API void EnumerateSessions(const Server& server, uint32_t* pSessionsCount, Session* pSessions);
 
-    //WUH_API void EnumerateProcesses(const Server& server, const Session* pSession, uint32_t* pProcessesCount, Process* pProcesses);
+    WUH_API void EnumerateProcesses(const Server& server, const Session* pSession, uint32_t* pProcessesCount, Process* pProcesses);
 
     WUH_API void LogoffSession(const Server& server, const Session& session);
 
-    //WUH_API void TerminateProcess(const Server& server, const Process& process);
+    WUH_API void TerminateRemoteProcess(const Server& server, const Process& process);
 
-    //WUH_API void UpdateProcessInformation(const Server& server, Process* process);
+    WUH_API void UpdateProcessInformation(const Server& server, Process* process);
   }
 
 #if __cplusplus
