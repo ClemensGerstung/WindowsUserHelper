@@ -85,9 +85,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper.cs" />
+    <Compile Include="DisposableList.cs" />
+    <Compile Include="Intern\NativeClasses.cs" />
+    <Compile Include="Intern\NativeMethods.cs" />
+    <Compile Include="Intern\WrappedMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Std.cs" />
     <Compile Include="WindowsUserHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

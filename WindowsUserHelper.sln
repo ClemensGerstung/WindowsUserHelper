@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppExample", "CppExample\Cp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsUserHelper", "WindowsUserHelper\WindowsUserHelper.vcxproj", "{FC717B1A-2851-4B66-B7EB-B0023710E87B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsUserHelper.Sharp.Generator", "WindowsUserHelper.Sharp.Generator\WindowsUserHelper.Sharp.Generator.csproj", "{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsUserHelper.Sharp", "WindowsUserHelper.Sharp\WindowsUserHelper.Sharp.csproj", "{5CDFCA56-98AF-468A-BF93-DACE8C5A1DF1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsUserHelper.Sharp.Example", "WindowsUserHelper.Sharp.Example\WindowsUserHelper.Sharp.Example.csproj", "{3C41F9FA-7C74-40DC-9C64-3A9B319DFF8B}"
@@ -43,18 +41,6 @@ Global
 		{FC717B1A-2851-4B66-B7EB-B0023710E87B}.Release|x64.Build.0 = Release|x64
 		{FC717B1A-2851-4B66-B7EB-B0023710E87B}.Release|x86.ActiveCfg = Release|Win32
 		{FC717B1A-2851-4B66-B7EB-B0023710E87B}.Release|x86.Build.0 = Release|Win32
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|x64.ActiveCfg = Debug|x64
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|x64.Build.0 = Debug|x64
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|x86.ActiveCfg = Debug|x86
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Debug|x86.Build.0 = Debug|x86
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|x64.ActiveCfg = Release|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|x64.Build.0 = Release|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|x86.ActiveCfg = Release|Any CPU
-		{86D3DC34-2BA7-4D0A-B0E7-3FE3033CA7CE}.Release|x86.Build.0 = Release|Any CPU
 		{5CDFCA56-98AF-468A-BF93-DACE8C5A1DF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5CDFCA56-98AF-468A-BF93-DACE8C5A1DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CDFCA56-98AF-468A-BF93-DACE8C5A1DF1}.Debug|x64.ActiveCfg = Debug|x64

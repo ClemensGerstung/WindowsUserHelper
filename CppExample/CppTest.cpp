@@ -55,6 +55,8 @@ int main() {
 
   wuh::EnumerateSessions(server, &sessionsCount, sessions.data());
 
+  
+
   wuh::Session session = sessions[1];
   uint32_t processCount = 0;
   wuh::EnumerateProcesses(server, &session, &processCount, nullptr);
